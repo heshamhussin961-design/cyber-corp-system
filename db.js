@@ -1,12 +1,11 @@
-// db.js
 const mysql = require('mysql2');
 
-// إعدادات الاتصال بـ XAMPP
-const connection = mysql.createConnection({
+// الكود ده بيقول: لو لقيت رابط داتابيز خارجي استخدمه، لو ملقيتش استخدم XAMPP بتاعنا
+const connection = mysql.createConnection(process.env.DATABASE_URL || {
     host: 'localhost',
-    user: 'root',      // اليوزر الافتراضي
-    password: '',      // الباسورد الافتراضي فاضي
-    database: 'company_system_db' // اسم الداتابيز بتاعتنا
+    user: 'root',
+    password: '',
+    database: 'company_system_db'
 });
 
 connection.connect((err) => {
