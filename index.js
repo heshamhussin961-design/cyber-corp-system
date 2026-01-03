@@ -129,7 +129,55 @@ app.post('/login', (req, res) => {
     });
 });
 
+// --- كود بناء الداتابيز (تشغيل مرة واحدة فقط) ---
+app.get('/init', (req, res) => {
+    const sql = `
+        CREATE TABLE IF NOT EXISTS roles (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(50) NOT NULL UNIQUE
+        );
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(100) NOT NULL UNIQUE,
+            email VARCHAR(150) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL,
+            role_id INT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL
+        );
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(200) NOT NULL,
+            description TEXT,
+            status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
+            user_id INT,
+            due_date DATE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+        CREATE TABLE IF NOT EXISTS attendance (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            clock_in DATETIME,
+            clock_out DATETIME,
+            status ENUM('present', 'absent', 'late') DEFAULT 'present',
+            date DATE NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+        INSERT IGNORE INTO roles (id, name) VALUES (1, 'Admin'), (2, 'Manager'), (3, 'Employee');
+    `;
 
+    // بنقسم الكود لأوامر منفصلة عشان يتنفذ
+    const queries = sql.split(';').filter(q => q.trim() !== '');
+
+    queries.forEach(query => {
+        db.query(query, (err) => {
+            if (err) console.error("Error creating table:", err.message);
+        });
+    });
+
+    res.send("✅ تم بناء الجداول في الداتابيز السحابية بنجاح!");
+});
 
 // تشغيل السيرفر
 app.listen(3000, () => {
