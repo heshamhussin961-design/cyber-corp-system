@@ -24,7 +24,6 @@
             height: 100vh;
             display: flex;
             overflow: hidden;
-            /* عشان السكرول يكون جوه المحتوى بس */
         }
 
         /* --- 1. القائمة الجانبية (Sidebar) --- */
@@ -54,7 +53,6 @@
             color: rgba(255, 255, 255, 0.7);
             padding: 15px;
             text-align: right;
-            /* للعربي */
             font-family: 'Cairo', sans-serif;
             font-size: 1.1rem;
             cursor: pointer;
@@ -66,7 +64,6 @@
             transition: 0.3s;
         }
 
-        /* تعديل الاتجاه لما يكون إنجليزي */
         html[dir="ltr"] .nav-btn {
             text-align: left;
         }
@@ -76,7 +73,6 @@
             background: var(--glass-bg);
             color: white;
             border-left: 4px solid #4facfe;
-            /* خط ملون جنب الزر */
         }
 
         html[dir="ltr"] .nav-btn:hover,
@@ -93,7 +89,6 @@
             position: relative;
         }
 
-        /* الهيدر اللي فوق */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -130,13 +125,11 @@
         /* --- 3. الصفحات (Tabs) --- */
         .page-section {
             display: none;
-            /* مخفي افتراضياً */
             animation: fadeIn 0.5s ease;
         }
 
         .page-section.active-page {
             display: block;
-            /* ظاهر لو نشط */
         }
 
         /* --- 4. ستايل الصناديق --- */
@@ -154,7 +147,6 @@
             border-radius: 20px;
         }
 
-        /* تحسينات المدخلات */
         input,
         select {
             width: 100%;
@@ -191,7 +183,6 @@
             }
         }
 
-        /* --- قوائم العرض --- */
         .list-item {
             background: rgba(255, 255, 255, 0.05);
             padding: 10px;
@@ -291,7 +282,9 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000';
+        // ✅ تم تحديث الرابط ليعمل على السيرفر الحي
+        const API_URL = 'https://cyber-corp-system.onrender.com';
+
         const currentUser = JSON.parse(localStorage.getItem('user'));
         if (!currentUser) window.location.href = 'login.html';
 
@@ -344,9 +337,8 @@
         // === 2. دالة تغيير اللغة ===
         function toggleLanguage() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            document.dir = currentLang === 'ar' ? 'rtl' : 'ltr'; // تغيير اتجاه الصفحة
+            document.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
 
-            // تحديث النصوص
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
                 if (translations[currentLang][key]) {
@@ -354,7 +346,6 @@
                 }
             });
 
-            // تحديث الـ Placeholder
             if (currentLang === 'en') {
                 document.getElementById('taskTitle').placeholder = "Task Title...";
                 document.getElementById('username').placeholder = "Username";
@@ -366,55 +357,53 @@
 
         // === 3. التنقل بين الصفحات ===
         function showPage(pageId) {
-            // اخفاء كل الصفحات
             document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active-page'));
-            // اظهار الصفحة المطلوبة
             document.getElementById(pageId).classList.add('active-page');
-
-            // تحديث زر القائمة النشط
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
 
         // === 4. الصلاحيات والبيانات ===
         function initSystem() {
-            // لو موظف عادي، نخفي زر "الموظفين" من القائمة
             if (currentUser.role_id === 3) {
                 document.getElementById('navEmployees').style.display = 'none';
-                document.getElementById('employees').remove(); // حماية إضافية: حذف القسم
+                document.getElementById('employees').remove();
             }
-            toggleLanguage(); // تطبيق اللغة الافتراضية
+            toggleLanguage();
             loadData();
         }
 
         async function loadData() {
-            // نفس دوال التحميل القديمة...
-            const users = await (await fetch(`${API_URL}/users`)).json();
-            const userDiv = document.getElementById('usersList');
-            const selTask = document.getElementById('userSelectTask');
-            const selAtt = document.getElementById('userSelectAttend');
+            try {
+                const users = await (await fetch(`${API_URL}/users`)).json();
+                const userDiv = document.getElementById('usersList');
+                const selTask = document.getElementById('userSelectTask');
+                const selAtt = document.getElementById('userSelectAttend');
 
-            if (userDiv) userDiv.innerHTML = '';
-            selTask.innerHTML = selAtt.innerHTML = '<option>...</option>';
+                if (userDiv) userDiv.innerHTML = '';
+                selTask.innerHTML = selAtt.innerHTML = '<option>...</option>';
 
-            users.forEach(u => {
-                if (userDiv) userDiv.innerHTML += `<div class="list-item"><span>${u.username}</span><small>${u.role}</small></div>`;
-                selTask.innerHTML += `<option value="${u.id}">${u.username}</option>`;
-                selAtt.innerHTML += `<option value="${u.id}">${u.username}</option>`;
-            });
+                users.forEach(u => {
+                    if (userDiv) userDiv.innerHTML += `<div class="list-item"><span>${u.username}</span><small>${u.role}</small></div>`;
+                    selTask.innerHTML += `<option value="${u.id}">${u.username}</option>`;
+                    selAtt.innerHTML += `<option value="${u.id}">${u.username}</option>`;
+                });
 
-            const tasks = await (await fetch(`${API_URL}/tasks`)).json();
-            document.getElementById('tasksList').innerHTML = tasks.map(t =>
-                `<div class="list-item"><span>${t.title} <small>(${t.username})</small></span><span>${t.due_date ? t.due_date.split('T')[0] : ''}</span></div>`
-            ).join('');
+                const tasks = await (await fetch(`${API_URL}/tasks`)).json();
+                document.getElementById('tasksList').innerHTML = tasks.map(t =>
+                    `<div class="list-item"><span>${t.title} <small>(${t.username})</small></span><span>${t.due_date ? t.due_date.split('T')[0] : ''}</span></div>`
+                ).join('');
 
-            const att = await (await fetch(`${API_URL}/attendance`)).json();
-            document.getElementById('attendanceList').innerHTML = att.map(a =>
-                `<div class="list-item"><span>${a.username}</span><small>${new Date(a.clock_in).toLocaleTimeString()}</small></div>`
-            ).join('');
+                const att = await (await fetch(`${API_URL}/attendance`)).json();
+                document.getElementById('attendanceList').innerHTML = att.map(a =>
+                    `<div class="list-item"><span>${a.username}</span><small>${new Date(a.clock_in).toLocaleTimeString()}</small></div>`
+                ).join('');
+            } catch (error) {
+                console.error("Error loading data:", error);
+                // لو حصل خطأ في الاتصال، ممكن تطلع رسالة للمستخدم هنا
+            }
         }
 
-        // دوال الإضافة (نفس القديم)
         async function addUser() { await postData('/users', { username: document.getElementById('username').value, email: document.getElementById('email').value, password: document.getElementById('password').value, role_id: document.getElementById('role_id').value }); alert('Saved!'); loadData(); }
         async function addTask() { await postData('/tasks', { title: document.getElementById('taskTitle').value, due_date: document.getElementById('taskDate').value, user_id: document.getElementById('userSelectTask').value }); alert('Sent!'); loadData(); }
         async function clockIn() { await postData('/attendance/clock-in', { user_id: document.getElementById('userSelectAttend').value }); alert('Welcome!'); loadData(); }
