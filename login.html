@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول 🔐</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-box {
+            background: #1e1e1e;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 350px;
+            border: 1px solid #333;
+        }
+
+        h2 {
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #e056fd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #be2edd;
+        }
+
+        .error {
+            color: #ff4757;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box">
+        <h2>بوابة الشركة 🛡️</h2>
+        <input type="email" id="email" placeholder="البريد الإلكتروني" value="heshamhussin961@gmail.com">
+        <input type="password" id="password" placeholder="كلمة السر">
+        <button onclick="login()">دخول 🚀</button>
+        <p class="error" id="errorMsg">بيانات الدخول غير صحيحة!</p>
+    </div>
+
+    <script>
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // أهم خطوة: بنحفظ بيانات اليوزر في "جيب المتصفح" (localStorage)
+                    localStorage.setItem('user', JSON.stringify(result.user));
+
+                    // تحويل لصفحة الداشبورد
+                    window.location.href = 'test.html';
+                } else {
+                    errorMsg.style.display = 'block';
+                    errorMsg.innerText = result.message;
+                }
+            } catch (err) {
+                alert("تأكد إن السيرفر شغال!");
+            }
+        }
+    </script>
+
+</body>
+
+</html>

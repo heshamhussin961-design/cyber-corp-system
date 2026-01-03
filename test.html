@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise System 💎</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary-grad: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --text-color: #fff;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: var(--text-color);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            /* عشان السكرول يكون جوه المحتوى بس */
+        }
+
+        /* --- 1. القائمة الجانبية (Sidebar) --- */
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            transition: 0.3s;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #4facfe;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            text-align: right;
+            /* للعربي */
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        /* تعديل الاتجاه لما يكون إنجليزي */
+        html[dir="ltr"] .nav-btn {
+            text-align: left;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            background: var(--glass-bg);
+            color: white;
+            border-left: 4px solid #4facfe;
+            /* خط ملون جنب الزر */
+        }
+
+        html[dir="ltr"] .nav-btn:hover,
+        html[dir="ltr"] .nav-btn.active {
+            border-left: none;
+            border-right: 4px solid #4facfe;
+        }
+
+        /* --- 2. المحتوى الرئيسي --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* الهيدر اللي فوق */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .lang-btn,
+        .logout-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: white;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ff4757;
+            border-color: #ff4757;
+        }
+
+        .lang-btn:hover {
+            background: #4facfe;
+        }
+
+        /* --- 3. الصفحات (Tabs) --- */
+        .page-section {
+            display: none;
+            /* مخفي افتراضياً */
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page-section.active-page {
+            display: block;
+            /* ظاهر لو نشط */
+        }
+
+        /* --- 4. ستايل الصناديق --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .glass-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        /* تحسينات المدخلات */
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        button.primary-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary-grad);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- قوائم العرض --- */
+        .list-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo">🚀 <span data-key="appName">Cyber Corp</span></div>
+
+        <button class="nav-btn active" onclick="showPage('dashboard')">
+            <i class="fas fa-home"></i> <span data-key="navDash">الرئيسية</span>
+        </button>
+
+        <button class="nav-btn" id="navEmployees" onclick="showPage('employees')">
+            <i class="fas fa-users"></i> <span data-key="navEmp">الموظفين</span>
+        </button>
+
+        <button class="nav-btn" onclick="showPage('attendance')">
+            <i class="fas fa-clock"></i> <span data-key="navAtt">الحضور</span>
+        </button>
+    </div>
+
+    <div class="main-content">
+
+        <div class="top-bar">
+            <h2 id="pageTitle">👋 <span data-key="welcome">أهلاً بك</span></h2>
+            <div class="action-buttons">
+                <button class="lang-btn" onclick="toggleLanguage()">🇬🇧 English / عربي</button>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+
+        <div id="dashboard" class="page-section active-page">
+            <div class="grid-container">
+                <div class="glass-box">
+                    <h3 data-key="assignTask">📝 توزيع المهام</h3>
+                    <input type="text" id="taskTitle" placeholder="عنوان المهمة...">
+                    <input type="date" id="taskDate">
+                    <select id="userSelectTask">
+                        <option>...</option>
+                    </select>
+                    <button class="primary-btn" onclick="addTask()" data-key="sendBtn">إرسال</button>
+                </div>
+
+                <div class="glass-box">
+                    <h3 data-key="recentTasks">📋 آخر المهام</h3>
+                    <div id="tasksList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="employees" class="page-section">
+            <div class="glass-box" style="max-width: 600px; margin: 0 auto;">
+                <h3 data-key="addEmp">👤 إضافة موظف جديد</h3>
+                <input type="text" id="username" placeholder="Name">
+                <input type="email" id="email" placeholder="Email">
+                <input type="password" id="password" placeholder="Password">
+                <select id="role_id">
+                    <option value="3" data-key="roleEmp">موظف</option>
+                    <option value="2" data-key="roleMgr">مدير</option>
+                    <option value="1" data-key="roleAdmin">أدمن</option>
+                </select>
+                <button class="primary-btn" style="background: #27ae60;" onclick="addUser()"
+                    data-key="saveBtn">حفظ</button>
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+                <h4 data-key="empList">قائمة الموظفين</h4>
+                <div id="usersList"></div>
+            </div>
+        </div>
+
+        <div id="attendance" class="page-section">
+            <div class="glass-box">
+                <h3 data-key="attTitle">⏰ تسجيل الحضور</h3>
+                <p style="color:#ccc" data-key="attDesc">قم باختيار اسمك للتسجيل</p>
+
+                <select id="userSelectAttend">
+                    <option>...</option>
+                </select>
+
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button class="primary-btn" onclick="clockIn()" data-key="inBtn">دخول 🌞</button>
+                    <button class="primary-btn" style="background:#e74c3c" onclick="clockOut()" data-key="outBtn">خروج
+                        👋</button>
+                </div>
+
+                <div id="attendanceList" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        if (!currentUser) window.location.href = 'login.html';
+
+        // === 1. قاموس الترجمة ===
+        const translations = {
+            ar: {
+                appName: "الشركة الذكية",
+                navDash: "الرئيسية",
+                navEmp: "إدارة الموظفين",
+                navAtt: "تقارير الحضور",
+                welcome: "أهلاً بك، " + currentUser.username,
+                assignTask: "📝 توزيع المهام",
+                recentTasks: "📋 آخر المهام",
+                addEmp: "👤 إضافة موظف جديد",
+                empList: "قائمة الموظفين",
+                attTitle: "⏰ بصمة الحضور",
+                attDesc: "اختار اسمك وسجل الوقت",
+                sendBtn: "إرسال المهمة",
+                saveBtn: "حفظ الموظف",
+                roleEmp: "موظف",
+                roleMgr: "مدير",
+                roleAdmin: "أدمن",
+                inBtn: "تسجيل دخول",
+                outBtn: "تسجيل خروج"
+            },
+            en: {
+                appName: "Smart Corp",
+                navDash: "Dashboard",
+                navEmp: "Manage Staff",
+                navAtt: "Attendance Reports",
+                welcome: "Welcome, " + currentUser.username,
+                assignTask: "📝 Assign Tasks",
+                recentTasks: "📋 Recent Tasks",
+                addEmp: "👤 Add New Employee",
+                empList: "Employee List",
+                attTitle: "⏰ Attendance Clock",
+                attDesc: "Select your name to clock in/out",
+                sendBtn: "Send Task",
+                saveBtn: "Save Employee",
+                roleEmp: "Employee",
+                roleMgr: "Manager",
+                roleAdmin: "Admin",
+                inBtn: "Clock In",
+                outBtn: "Clock Out"
+            }
+        };
+
+        let currentLang = 'ar';
+
+        // === 2. دالة تغيير اللغة ===
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.dir = currentLang === 'ar' ? 'rtl' : 'ltr'; // تغيير اتجاه الصفحة
+
+            // تحديث النصوص
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
+            });
+
+            // تحديث الـ Placeholder
+            if (currentLang === 'en') {
+                document.getElementById('taskTitle').placeholder = "Task Title...";
+                document.getElementById('username').placeholder = "Username";
+            } else {
+                document.getElementById('taskTitle').placeholder = "عنوان المهمة...";
+                document.getElementById('username').placeholder = "اسم المستخدم";
+            }
+        }
+
+        // === 3. التنقل بين الصفحات ===
+        function showPage(pageId) {
+            // اخفاء كل الصفحات
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active-page'));
+            // اظهار الصفحة المطلوبة
+            document.getElementById(pageId).classList.add('active-page');
+
+            // تحديث زر القائمة النشط
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // === 4. الصلاحيات والبيانات ===
+        function initSystem() {
+            // لو موظف عادي، نخفي زر "الموظفين" من القائمة
+            if (currentUser.role_id === 3) {
+                document.getElementById('navEmployees').style.display = 'none';
+                document.getElementById('employees').remove(); // حماية إضافية: حذف القسم
+            }
+            toggleLanguage(); // تطبيق اللغة الافتراضية
+            loadData();
+        }
+
+        async function loadData() {
+            // نفس دوال التحميل القديمة...
+            const users = await (await fetch(`${API_URL}/users`)).json();
+            const userDiv = document.getElementById('usersList');
+            const selTask = document.getElementById('userSelectTask');
+            const selAtt = document.getElementById('userSelectAttend');
+
+            if (userDiv) userDiv.innerHTML = '';
+            selTask.innerHTML = selAtt.innerHTML = '<option>...</option>';
+
+            users.forEach(u => {
+                if (userDiv) userDiv.innerHTML += `<div class="list-item"><span>${u.username}</span><small>${u.role}</small></div>`;
+                selTask.innerHTML += `<option value="${u.id}">${u.username}</option>`;
+                selAtt.innerHTML += `<option value="${u.id}">${u.username}</option>`;
+            });
+
+            const tasks = await (await fetch(`${API_URL}/tasks`)).json();
+            document.getElementById('tasksList').innerHTML = tasks.map(t =>
+                `<div class="list-item"><span>${t.title} <small>(${t.username})</small></span><span>${t.due_date ? t.due_date.split('T')[0] : ''}</span></div>`
+            ).join('');
+
+            const att = await (await fetch(`${API_URL}/attendance`)).json();
+            document.getElementById('attendanceList').innerHTML = att.map(a =>
+                `<div class="list-item"><span>${a.username}</span><small>${new Date(a.clock_in).toLocaleTimeString()}</small></div>`
+            ).join('');
+        }
+
+        // دوال الإضافة (نفس القديم)
+        async function addUser() { await postData('/users', { username: document.getElementById('username').value, email: document.getElementById('email').value, password: document.getElementById('password').value, role_id: document.getElementById('role_id').value }); alert('Saved!'); loadData(); }
+        async function addTask() { await postData('/tasks', { title: document.getElementById('taskTitle').value, due_date: document.getElementById('taskDate').value, user_id: document.getElementById('userSelectTask').value }); alert('Sent!'); loadData(); }
+        async function clockIn() { await postData('/attendance/clock-in', { user_id: document.getElementById('userSelectAttend').value }); alert('Welcome!'); loadData(); }
+        async function clockOut() { await postData('/attendance/clock-out', { user_id: document.getElementById('userSelectAttend').value }); alert('Bye!'); loadData(); }
+
+        async function postData(endpoint, data) { await fetch(API_URL + endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); }
+        function logout() { localStorage.removeItem('user'); window.location.href = 'login.html'; }
+
+        initSystem();
+    </script>
+
+</body>
+
+</html>
